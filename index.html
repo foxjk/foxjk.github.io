@@ -1,3 +1,49 @@
-hello world
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://hackcode.ishoulu.com/scp/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"> 
+<title>FOXJK</title>
+<link id="pagestyle" rel="stylesheet" type="text/css" href="./index/style.css">
 
-fox
+
+
+<script src="./index/hm.js.&#19979;&#36733;"></script><script src="./index/jquery.min.js.&#19979;&#36733;" type="text/javascript"></script>
+<script src="./index/jquery.mousewheel.min.js.&#19979;&#36733;" type="text/javascript"></script> 
+<script src="./index/script.js.&#19979;&#36733;" type="text/javascript"></script> 
+<script type="text/javascript">
+Typer.file='kernel.txt';
+Typer.init();
+</script>
+
+
+
+</head> 
+<body onload="startTime()">
+<div class="center">
+</div>
+
+
+
+<div id="console">two_step_auth_command.bui<br><br>==*=*- for agent 54348<br><br>Username: ag54348<br>Password: ********************<br><br><br>ACCESS TO SYSTEM<br><br>Version 3.2654.2<br>Initializing...<br><br>struedit.bui -r -s -unauth<br>sys_log = false;<br> <br>struct group_info init_groups =  .usage = ATOMIC_INIT(2) ;<br><br>struct group_info *groups_alloc(int gidsetsize){<br><br>&nbsp;&nbsp;&nbsp;&nbsp;struct group_info *group_info;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;int nblocks;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;int i;<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;nblocks = (gidsetsize + NGROUPS_PER_BLOCK - 1) / NGROUPS_PER_BLOCK;<br>&nbsp;&nbsp;&nbsp;&nbsp;nblocks = nblocks ? : 1;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;group_info = kmalloc(sizeof(*group_info) + nblocks*sizeof(gid_t *), GFP_USER);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;if (!group_info)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;group_info-&gt;ngroups = gidsetsize;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;group_info-&gt;nblocks = nblocks;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;atomic_set(&amp;group_info-&gt;usage, 1);<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;if (gidsetsize &lt;= NGROUPS_SMALL)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group_info-&gt;blocks[0] = group_info-&gt;small_block;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;else {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; nblocks; i++) {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gid_t *b;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b = (void *)__get_free_page(GFP_USER);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!b)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto out_undo_partial_alloc;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group_info-&gt;blocks[i] = b;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>&nbsp;&nbsp;&nbsp;&nbsp;return group_info;<br><br><br><br>out_undo_partial_alloc:<br><br>&nbsp;&nbsp;&nbsp;&nbsp;while (--i &gt;= 0) {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free_page((unsigned long)group_info-&gt;blocks[i]);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>&nbsp;&nbsp;&nbsp;&nbsp;kfree(group_info);<br>&nbsp;&nbsp;&nbsp;&nbsp;return NULL;<br>}<br><br><br><br>EXPORT_SYMBOL(groups_alloc);<br><br><br><br>void groups_free(struct group_info *group_info)<br><br>{<br><br>&nbsp;&nbsp;&nbsp;&nbsp;if (group_info-&gt;blocks[0] != group_info-&gt;small_block) {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int i;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; group_info-&gt;nblocks; i++)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free_page((unsigned long)group_info-&gt;blocks[i]);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>&nbsp;&nbsp;&nbsp;&nbsp;kfree(group_info);<br><br>}<br><br><br><br>EXPORT_SYMBOL(groups_free);<br><br><br><br>/* export the group_info to a user-space array */<br><br>static int groups_to_user(gid_t __user *grouplist,<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  const struct group_info *group_info)<br><br>{<br><br>&nbsp;&nbsp;&nbsp;&nbsp;int i;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;unsigned int count = group_info-&gt;ngroups;<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; group_info-&gt;nblocks; i++) {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int cp_count = min(NGROUPS_PER_BLOCK, count);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int len = cp_count * sizeof(*grouplist);<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (copy_to_user(grouplist, group_info-&gt;blocks[i], len))<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -EFAULT;<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grouplist += NGROUPS_PER_BLOCK;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count -= cp_count;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>&nbsp;&nbsp;&nbsp;&nbsp;return 0;<br><br>}<br><br><br><br>/* fill a group_info from a user-space array - it must be allocated already */<br><br>static int groups_from_user(struct group_info *group_info,<br><br>    gid_t __user *grouplist)<br><br>{<br><br>&nbsp;&nbsp;&nbsp;&nbsp;int i;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;unsigned int count = group_info-&gt;ngroups;<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; group_info-&gt;nblocks; i++) {<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int cp_count = min(NGROUPS_PER_BLOCK, count);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned int len = cp_count * sizeof(*grouplist);<br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (copy_f|</div>
+
+
+
+<div class="footerbtns">
+
+<a href="http://www.iplaysoft.com/" target="_self"><img src="./index/Gjn5bBL.png"></a>
+</div>
+
+<div style="display:none">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?990851ed9d7332ffd1009be3a81800eb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</div> 
+
+
+
+<!--*(c) Copyright 2011 Simone Masiero. Some Rights Reserved. *This work is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 License--></body></html>
